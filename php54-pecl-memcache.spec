@@ -5,8 +5,8 @@
 %define pecl_name memcache
 
 Summary:      Extension to work with the Memcached caching daemon
-Name:         php-pecl-memcache
-Version:      3.0.5
+Name:         php54w-pecl-memcache
+Version:      3.0.6
 Release:      1%{?dist}
 License:      PHP
 Group:        Development/Languages
@@ -17,7 +17,7 @@ Source:       http://pecl.php.net/get/%{pecl_name}-%{version}.tgz
 Source2:      xml2changelog
 
 BuildRoot:    %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires: php-devel >= 4.3.11, php-pear, zlib-devel
+BuildRequires: php54w-devel >= 4.3.11, php54w-pear, zlib-devel
 Requires(post): %{__pecl}
 Requires(postun): %{__pecl}
 Provides:     php-pecl(%{pecl_name}) = %{version}-%{release}
@@ -130,35 +130,7 @@ fi
 
 
 %changelog
-* Tue Mar 15 2011 Andy Thompson <andy@webtatic.com> 3.0.5-1
-- new version 3.0.5
-
-* Sat Feb 28 2009 Remi Collet <Fedora@FamilleCollet.com> 3.0.4-1
-- new version 3.0.4
-
-* Tue Jan 13 2009 Remi Collet <Fedora@FamilleCollet.com> 3.0.3-1
-- new version 3.0.3
-
-* Fri Sep 11 2008 Remi Collet <Fedora@FamilleCollet.com> 3.0.2-1
-- new version 3.0.2
-
-* Fri Sep 11 2008 Remi Collet <Fedora@FamilleCollet.com> 2.2.4-1
-- new version 2.2.4 (bug fixes)
-
-* Sat Feb  9 2008 Remi Collet <Fedora@FamilleCollet.com> 2.2.3-1
-- new version
-
-* Thu Jan 10 2008 Remi Collet <Fedora@FamilleCollet.com> 2.2.2-1
-- new version
-
-* Thu Nov 01 2007 Remi Collet <Fedora@FamilleCollet.com> 2.2.1-1
-- new version
-
-* Sat Sep 22 2007 Remi Collet <Fedora@FamilleCollet.com> 2.2.0-1
-- new version
-- add new INI directives (hash_strategy + hash_function) to config
-- add BR on php-devel >= 4.3.11 
-
-* Mon Aug 20 2007 Remi Collet <Fedora@FamilleCollet.com> 2.1.2-1
-- initial RPM
+* Sun Jul 22 2012 Andy Thompson <andy@webtatic.com> 3.0.6-1
+- branch from php53-pecl-memcache
+- update to 3.0.6
 
