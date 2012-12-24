@@ -6,7 +6,7 @@
 
 Summary:      Extension to work with the Memcached caching daemon
 Name:         php54w-pecl-memcache
-Version:      3.0.6
+Version:      3.0.7
 Release:      1%{?dist}
 License:      PHP
 Group:        Development/Languages
@@ -20,6 +20,7 @@ BuildRoot:    %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: php54w-devel >= 4.3.11, php54w-pear, zlib-devel
 Requires(post): %{__pecl}
 Requires(postun): %{__pecl}
+Provides:     php-pecl-%{pecl_name} = %{version}-%{release}
 Provides:     php-pecl(%{pecl_name}) = %{version}-%{release}
 %if %{?php_zend_api}0
 Requires:     php(zend-abi) = %{php_zend_api}
@@ -130,6 +131,9 @@ fi
 
 
 %changelog
+* Mon Dec 24 2012 Andy Thompson <andy@webtatic.com> 3.0.7-1
+- update to 3.0.7
+
 * Sun Jul 22 2012 Andy Thompson <andy@webtatic.com> 3.0.6-1
 - branch from php53-pecl-memcache
 - update to 3.0.6
