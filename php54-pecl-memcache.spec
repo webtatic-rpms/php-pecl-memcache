@@ -101,7 +101,7 @@ EOF
 # Install XML package description
 # use 'name' rather than 'pecl_name' to avoid conflict with pear extensions
 %{__mkdir_p} %{buildroot}%{pecl_xmldir}
-%{__install} -m 644 ../package.xml %{buildroot}%{pecl_xmldir}/%{name}.xml
+%{__install} -m 644 ../package.xml %{buildroot}%{pecl_xmldir}/%{pecl_name}.xml
 
 
 %clean
@@ -110,7 +110,7 @@ EOF
 
 %if 0%{?pecl_install:1}
 %post
-%{pecl_install} %{pecl_xmldir}/%{name}.xml >/dev/null || :
+%{pecl_install} %{pecl_xmldir}/%{pecl_name}.xml >/dev/null || :
 %endif
 
 
@@ -128,12 +128,13 @@ fi
 %doc %{pecl_name}-%{version}/example.php %{pecl_name}-%{version}/memcache.php
 %config(noreplace) %{_sysconfdir}/php.d/%{pecl_name}.ini
 %{php_extdir}/%{pecl_name}.so
-%{pecl_xmldir}/%{name}.xml
+%{pecl_xmldir}/%{pecl_name}.xml
 
 
 %changelog
 * Sat May 18 2013 Andy Thompson <andy@webtatic.com> 3.0.8-1
 - update to 3.0.8
+- Fix pecl xml location
 
 * Mon Dec 24 2012 Andy Thompson <andy@webtatic.com> 3.0.7-1
 - update to 3.0.7
