@@ -6,7 +6,7 @@
 
 Summary:      Extension to work with the Memcached caching daemon
 Name:         php54w-pecl-memcache
-Version:      3.0.7
+Version:      3.0.8
 Release:      1%{?dist}
 License:      PHP
 Group:        Development/Languages
@@ -131,6 +131,9 @@ fi
 
 
 %changelog
+* Sat May 18 2013 Andy Thompson <andy@webtatic.com> 3.0.8-1
+- update to 3.0.8
+
 * Mon Dec 24 2012 Andy Thompson <andy@webtatic.com> 3.0.7-1
 - update to 3.0.7
 
