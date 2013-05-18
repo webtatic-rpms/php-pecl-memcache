@@ -2,10 +2,11 @@
 %{!?php_extdir: %{expand: %%global php_extdir %(php-config --extension-dir)}}
 %global php_apiver  %((echo 0; php -i 2>/dev/null | sed -n 's/^PHP API => //p') | tail -1)
 
+%define basepkg   php54w
 %define pecl_name memcache
 
 Summary:      Extension to work with the Memcached caching daemon
-Name:         php54w-pecl-memcache
+Name:         %{basepkg}-pecl-memcache
 Version:      3.0.8
 Release:      1%{?dist}
 License:      PHP
@@ -17,7 +18,7 @@ Source:       http://pecl.php.net/get/%{pecl_name}-%{version}.tgz
 Source2:      xml2changelog
 
 BuildRoot:    %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires: php54w-devel >= 4.3.11, php54w-pear, zlib-devel
+BuildRequires: %{basepkg}-devel >= 4.3.11, %{basepkg}-pear, zlib-devel
 Requires(post): %{__pecl}
 Requires(postun): %{__pecl}
 Provides:     php-pecl-%{pecl_name} = %{version}-%{release}
