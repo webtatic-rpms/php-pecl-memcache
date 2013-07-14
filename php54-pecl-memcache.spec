@@ -1,6 +1,8 @@
 %{!?__pecl:     %{expand: %%global __pecl     %{_bindir}/pecl}}
-%{!?php_extdir: %{expand: %%global php_extdir %(php-config --extension-dir)}}
 %global php_apiver  %((echo 0; php -i 2>/dev/null | sed -n 's/^PHP API => //p') | tail -1)
+
+# Build ZTS extension or only NTS
+%global with_zts      1
 
 %define basepkg   php54w
 %define pecl_name memcache
@@ -8,7 +10,7 @@
 Summary:      Extension to work with the Memcached caching daemon
 Name:         %{basepkg}-pecl-memcache
 Version:      3.0.8
-Release:      1%{?dist}
+Release:      2%{?dist}
 License:      PHP
 Group:        Development/Languages
 URL:          http://pecl.php.net/package/%{pecl_name}
@@ -42,26 +44,39 @@ Memcache can be used as a PHP session handler.
 
 %prep 
 %setup -c -q
-%{_bindir}/php -n %{SOURCE2} package.xml >CHANGELOG
+%{_bindir}/php %{SOURCE2} package.xml >CHANGELOG
 
-# avoid spurious-executable-perm
-find . -type f -exec chmod -x {} \;
+%if %{with_zts}
+cp -r %{pecl_name}-%{version} %{pecl_name}-%{version}-zts
+%endif
 
 %build
-cd %{pecl_name}-%{version}
+
+pushd %{pecl_name}-%{version}
 phpize
-%configure
+%configure --with-php-config=%{_bindir}/php-config
 %{__make} %{?_smp_mflags}
+popd
+
+%if %{with_zts}
+pushd %{pecl_name}-%{version}-zts
+zts-phpize
+%configure --with-php-config=%{_bindir}/zts-php-config
+%{__make} %{?_smp_mflags}
+popd
+%endif
 
 
 %install
-cd %{pecl_name}-%{version}
 %{__rm} -rf %{buildroot}
+
+pushd %{pecl_name}-%{version}
 %{__make} install INSTALL_ROOT=%{buildroot}
+popd
 
 # Drop in the bit of configuration
-%{__mkdir_p} %{buildroot}%{_sysconfdir}/php.d
-%{__cat} > %{buildroot}%{_sysconfdir}/php.d/%{pecl_name}.ini << 'EOF'
+%{__mkdir_p} %{buildroot}%{php_inidir}
+%{__cat} > %{buildroot}%{php_inidir}/%{pecl_name}.ini << 'EOF'
 ; ----- Enable %{pecl_name} extension module
 extension=%{pecl_name}.so
 
@@ -98,10 +113,21 @@ extension=%{pecl_name}.so
 ;session.save_path="tcp://localhost:11211?persistent=1&weight=1&timeout=1&retry_interval=15"
 EOF
 
+%if %{with_zts}
+pushd %{pecl_name}-%{version}-zts
+%{__make} install INSTALL_ROOT=%{buildroot}
+popd
+
+# Drop in the bit of configuration
+%{__mkdir_p} %{buildroot}%{php_ztsinidir}
+
+%{__cp} %{buildroot}%{php_inidir}/%{pecl_name}.ini %{buildroot}%{php_ztsinidir}/%{pecl_name}.ini
+%endif
+
 # Install XML package description
 # use 'name' rather than 'pecl_name' to avoid conflict with pear extensions
 %{__mkdir_p} %{buildroot}%{pecl_xmldir}
-%{__install} -m 644 ../package.xml %{buildroot}%{pecl_xmldir}/%{pecl_name}.xml
+%{__install} -m 644 package.xml %{buildroot}%{pecl_xmldir}/%{pecl_name}.xml
 
 
 %clean
@@ -126,12 +152,20 @@ fi
 %defattr(-, root, root, -)
 %doc CHANGELOG %{pecl_name}-%{version}/CREDITS %{pecl_name}-%{version}/README 
 %doc %{pecl_name}-%{version}/example.php %{pecl_name}-%{version}/memcache.php
-%config(noreplace) %{_sysconfdir}/php.d/%{pecl_name}.ini
+%config(noreplace) %{php_inidir}/%{pecl_name}.ini
 %{php_extdir}/%{pecl_name}.so
 %{pecl_xmldir}/%{pecl_name}.xml
+%if %{with_zts}
+%config(noreplace) %{php_ztsinidir}/%{pecl_name}.ini
+%{php_ztsextdir}/%{pecl_name}.so
+%endif
+
 
 
 %changelog
+* Sun Jul 14 2013 Andy Thompson <andy@webtatic.com> 3.0.8-2
+- Add ZTS extension compilation
+
 * Sat May 18 2013 Andy Thompson <andy@webtatic.com> 3.0.8-1
 - update to 3.0.8
 - Fix pecl xml location
