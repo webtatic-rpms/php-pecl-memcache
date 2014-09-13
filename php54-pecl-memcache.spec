@@ -1,16 +1,14 @@
 %{!?__pecl:     %{expand: %%global __pecl     %{_bindir}/pecl}}
 %global php_apiver  %((echo 0; php -i 2>/dev/null | sed -n 's/^PHP API => //p') | tail -1)
 
-# Build ZTS extension or only NTS
-%global with_zts      1
-
-%define basepkg   php54w
-%define pecl_name memcache
+%global basepkg   php54w
+%global pecl_name memcache
+%global with_zts  0%{?__ztsphp:1}
 
 Summary:      Extension to work with the Memcached caching daemon
 Name:         %{basepkg}-pecl-memcache
 Version:      3.0.8
-Release:      2%{?dist}
+Release:      3%{?dist}
 License:      PHP
 Group:        Development/Languages
 URL:          http://pecl.php.net/package/%{pecl_name}
@@ -30,6 +28,12 @@ Requires:     php(zend-abi) = %{php_zend_api}
 Requires:     php(api) = %{php_core_api}
 %else
 Requires:     php-api = %{php_apiver}
+%endif
+
+%if 0%{?fedora} < 20
+# Filter shared private
+%{?filter_provides_in: %filter_provides_in %{_libdir}/.*\.so$}
+%{?filter_setup}
 %endif
 
 %description
@@ -163,6 +167,9 @@ fi
 
 
 %changelog
+* Sat Sep 13 2014 Andy Thompson <andy@webtatic.com> 3.0.8-3
+- Filter .so provides < EL7
+
 * Sun Jul 14 2013 Andy Thompson <andy@webtatic.com> 3.0.8-2
 - Add ZTS extension compilation
 
