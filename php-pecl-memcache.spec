@@ -1,7 +1,7 @@
 %{!?__pecl:     %{expand: %%global __pecl     %{_bindir}/pecl}}
 %global php_apiver  %((echo 0; php -i 2>/dev/null | sed -n 's/^PHP API => //p') | tail -1)
 
-%global basepkg   php54w
+%global basepkg   %{?basepkg}%{!?basepkg:php}
 %global pecl_name memcache
 %global with_zts  0%{?__ztsphp:1}
 
